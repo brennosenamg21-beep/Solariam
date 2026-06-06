@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Solariam Clássico (padrão) */
+    --solariam-void: #0a0b10;
+    --solariam-night: #12141c;
+    --solariam-slate: #1a1d28;
+    --solariam-panel: #222633;
+    --solariam-border: #3a3f52;
+    --solariam-gold: #c9a227;
+    --solariam-gold-light: #e8c547;
+    --solariam-gold-dim: #8a7120;
+    --solariam-ember: #d45a2a;
+    --solariam-frost: #5b8fd4;
+    --solariam-mist: #9aa3b8;
+    --solariam-parchment: #e8e0cc;
+  }
+
+  [data-theme="light"] {
+    --solariam-void: #f5f0e8;
+    --solariam-night: #ebe3d6;
+    --solariam-slate: #ddd5c4;
+    --solariam-panel: #ffffff;
+    --solariam-border: #c9b896;
+    --solariam-gold: #b8962e;
+    --solariam-gold-light: #d4b03a;
+    --solariam-gold-dim: #8a7120;
+    --solariam-ember: #c04a1a;
+    --solariam-frost: #4a7bc0;
+    --solariam-mist: #6b7280;
+    --solariam-parchment: #2d2a24;
+  }
+
+  [data-theme="ember"] {
+    --solariam-void: #1a0a05;
+    --solariam-night: #2d140c;
+    --solariam-slate: #3d1f10;
+    --solariam-panel: #4a2514;
+    --solariam-border: #8b4513;
+    --solariam-gold: #ff6b1a;
+    --solariam-gold-light: #ff9944;
+    --solariam-gold-dim: #cc5515;
+    --solariam-ember: #ff3300;
+    --solariam-frost: #ffaa33;
+    --solariam-mist: #cc8866;
+    --solariam-parchment: #ffeedd;
+  }
+
+  [data-theme="frost"] {
+    --solariam-void: #050a1a;
+    --solariam-night: #0c142d;
+    --solariam-slate: #101f3d;
+    --solariam-panel: #14254a;
+    --solariam-border: #1e3a5f;
+    --solariam-gold: #44aaff;
+    --solariam-gold-light: #77ccff;
+    --solariam-gold-dim: #3388cc;
+    --solariam-ember: #00ffff;
+    --solariam-frost: #0088ff;
+    --solariam-mist: #88ccff;
+    --solariam-parchment: #e0f0ff;
+  }
+
+  [data-theme="void"] {
+    --solariam-void: #05050a;
+    --solariam-night: #0d0d1a;
+    --solariam-slate: #1a1a2e;
+    --solariam-panel: #22223a;
+    --solariam-border: #3a3a5a;
+    --solariam-gold: #aa44ff;
+    --solariam-gold-light: #cc77ff;
+    --solariam-gold-dim: #8833cc;
+    --solariam-ember: #ff44aa;
+    --solariam-frost: #4488ff;
+    --solariam-mist: #8888aa;
+    --solariam-parchment: #e0d0f0;
+  }
+
+  [data-theme="nature"] {
+    --solariam-void: #051a05;
+    --solariam-night: #0d2d0d;
+    --solariam-slate: #103d10;
+    --solariam-panel: #144a14;
+    --solariam-border: #1e5f1e;
+    --solariam-gold: #44cc44;
+    --solariam-gold-light: #77ee77;
+    --solariam-gold-dim: #33aa33;
+    --solariam-ember: #ff8800;
+    --solariam-frost: #00aa88;
+    --solariam-mist: #88cc88;
+    --solariam-parchment: #e0ffe0;
+  }
+
+  body {
+    @apply font-body antialiased;
+    background-color: var(--solariam-void);
+    color: var(--solariam-parchment);
+  }
+
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--solariam-night);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--solariam-border);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--solariam-gold);
+  }
+
+  /* Focus visible for accessibility */
+  :focus-visible {
+    @apply outline-none ring-2 ring-solariam-gold ring-offset-2 ring-offset-solariam-void;
+  }
+}
+
+@layer components {
+  .bg-starfield {
+    background-image: 
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.15) 0%, transparent 100%);
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.2s ease-out;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
