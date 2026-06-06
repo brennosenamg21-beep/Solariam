@@ -2,13 +2,13 @@ export type MovementUnit = 'meters' | 'feet'
 
 export type DisplayMode = 'bars' | 'symbols'
 
-export type ThemeName = 
-  | 'solariam'      // Tema padrão (escuro dourado)
-  | 'light'         // Tema claro
-  | 'ember'         // Tema brasas/vermelho
-  | 'frost'         // Tema gelo/azul
-  | 'void'          // Tema vazio/roxo escuro
-  | 'nature'        // Tema natureza/verde
+export type ThemeName =
+  | 'solariam'
+  | 'light'
+  | 'ember'
+  | 'frost'
+  | 'void'
+  | 'nature'
 
 export interface ThemeConfig {
   name: string
@@ -30,112 +30,123 @@ export interface ThemeConfig {
 }
 
 export const THEMES: Record<ThemeName, ThemeConfig> = {
+  // Escuro dourado — clássico Solariam, tons abafados
   solariam: {
     name: 'solariam',
     label: 'Solariam Clássico',
     colors: {
-      void: '#0a0b10',
-      night: '#12141c',
-      slate: '#1a1d28',
-      panel: '#222633',
-      border: '#3a3f52',
-      gold: '#c9a227',
-      'gold-light': '#e8c547',
-      'gold-dim': '#8a7120',
-      ember: '#d45a2a',
-      frost: '#5b8fd4',
-      mist: '#9aa3b8',
-      parchment: '#e8e0cc',
+      void: '#0d0e14',
+      night: '#14161f',
+      slate: '#1c1f2c',
+      panel: '#22263a',
+      border: '#383d52',
+      gold: '#b8922a',
+      'gold-light': '#d4aa48',
+      'gold-dim': '#7a6020',
+      ember: '#b84e28',
+      frost: '#4a7ab8',
+      mist: '#8a93a8',
+      parchment: '#ddd5bc',
     },
   },
+
+  // Pergaminho claro — papel envelhecido, tinta sépia
   light: {
     name: 'light',
-    label: 'Claro (Pergaminho)',
+    label: 'Pergaminho',
     colors: {
-      void: '#f5f0e8',
-      night: '#ebe3d6',
-      slate: '#ddd5c4',
-      panel: '#ffffff',
-      border: '#c9b896',
-      gold: '#b8962e',
-      'gold-light': '#d4b03a',
-      'gold-dim': '#8a7120',
-      ember: '#c04a1a',
-      frost: '#4a7bc0',
-      mist: '#6b7280',
-      parchment: '#2d2a24',
+      void: '#f0ead8',
+      night: '#e8e0ca',
+      slate: '#ddd5ba',
+      panel: '#f8f4ea',
+      border: '#b8a882',
+      gold: '#8a6e22',
+      'gold-light': '#a88830',
+      'gold-dim': '#6a5218',
+      ember: '#9a3c18',
+      frost: '#3a5e8a',
+      mist: '#6a6450',
+      parchment: '#2a2418',
     },
   },
+
+  // Brasas — vermelho-laranja apagado, como carvão
   ember: {
     name: 'ember',
-    label: 'Brasas Ardentes',
+    label: 'Brasas',
     colors: {
-      void: '#1a0a05',
-      night: '#2d140c',
-      slate: '#3d1f10',
-      panel: '#4a2514',
-      border: '#8b4513',
-      gold: '#ff6b1a',
-      'gold-light': '#ff9944',
-      'gold-dim': '#cc5515',
-      ember: '#ff3300',
-      frost: '#ffaa33',
-      mist: '#cc8866',
-      parchment: '#ffeedd',
+      void: '#150a06',
+      night: '#231008',
+      slate: '#301508',
+      panel: '#3c1c0c',
+      border: '#6a3018',
+      gold: '#c05c28',
+      'gold-light': '#d87840',
+      'gold-dim': '#8a3c18',
+      ember: '#c83820',
+      frost: '#c87030',
+      mist: '#9a6050',
+      parchment: '#f0ddd0',
     },
   },
+
+  // Gelo — azul frio e escuro, neve ao luar
   frost: {
     name: 'frost',
-    label: 'Gelo Eterno',
+    label: 'Gelo Lunar',
     colors: {
-      void: '#050a1a',
-      night: '#0c142d',
-      slate: '#101f3d',
-      panel: '#14254a',
-      border: '#1e3a5f',
-      gold: '#44aaff',
-      'gold-light': '#77ccff',
-      'gold-dim': '#3388cc',
-      ember: '#00ffff',
-      frost: '#0088ff',
-      mist: '#88ccff',
-      parchment: '#e0f0ff',
+      void: '#08101e',
+      night: '#0e182c',
+      slate: '#142038',
+      panel: '#1a2844',
+      border: '#26385e',
+      gold: '#4888c8',
+      'gold-light': '#6aa8e0',
+      'gold-dim': '#306898',
+      ember: '#48c0c8',
+      frost: '#2870c0',
+      mist: '#6890b8',
+      parchment: '#d8e8f4',
     },
   },
+
+  // Vazio — roxo escuro, espaço profundo
   void: {
     name: 'void',
     label: 'Vazio Estelar',
     colors: {
-      void: '#05050a',
-      night: '#0d0d1a',
-      slate: '#1a1a2e',
-      panel: '#22223a',
-      border: '#3a3a5a',
-      gold: '#aa44ff',
-      'gold-light': '#cc77ff',
-      'gold-dim': '#8833cc',
-      ember: '#ff44aa',
-      frost: '#4488ff',
-      mist: '#8888aa',
-      parchment: '#e0d0f0',
+      void: '#0a080e',
+      night: '#12101a',
+      slate: '#1c1828',
+      panel: '#241e34',
+      border: '#382e50',
+      gold: '#8848cc',
+      'gold-light': '#a868e8',
+      'gold-dim': '#6030a0',
+      ember: '#c84890',
+      frost: '#4868d8',
+      mist: '#786898',
+      parchment: '#d8cce8',
     },
   },
+
+  // Floresta — verde musgo escuro, tons de madeira
   nature: {
     name: 'nature',
-    label: 'Natureza Viva',
+    label: 'Floresta',
     colors: {
-      void: '#051a05',
-      night: '#0d2d0d',
-      slate: '#103d10',
-      panel: '#144a14',
-      border: '#1e5f1e',
-      gold: '#44cc44',
-      'gold-light': '#77ee77',
-      'gold-dim': '#33aa33',
-      ember: '#ff8800',
-      frost: '#00aa88',
-      mist: '#88cc88',
-      parchment: '#e0ffe0',
+      void: '#080e08',
+      night: '#101808',
+      slate: '#182010',
+      panel: '#1e2c14',
+      border: '#2c4020',
+      gold: '#5aa040',
+      'gold-light': '#78c058',
+      'gold-dim': '#3c7828',
+      ember: '#c07828',
+      frost: '#288878',
+      mist: '#709868',
+      parchment: '#d8ecd0',
     },
   },
 }

@@ -6,10 +6,10 @@ import {
   type Skill,
 } from '../types/character'
 
-/** Valor base de PV por nível (todas as classes, por enquanto) */
+/** Valor base de PV por nível */
 export const HP_BASE_PER_LEVEL = 10
 
-/** Valor base de Atma por nível (todas as classes, por enquanto) */
+/** Valor base de Atma por nível */
 export const ATMA_BASE_PER_LEVEL = 5
 
 export function clampAttribute(value: number): number {
@@ -44,7 +44,6 @@ export function calculateSkillTotal(
   if (skill.trainedOnly && !skill.trained) {
     return null
   }
-
   const penalty = skill.armorPenaltyApplies ? globalArmorPenalty : 0
   return attributeValue + skill.training + skill.others - penalty
 }
@@ -120,12 +119,18 @@ export function getDefenseBreakdown(character: Character) {
 }
 
 export function calculateCarryLimit(forca: number): number {
-  return Math.max(0, 5 + (forca * 5))
+  return Math.max(0, 5 + forca * 5)
 }
 
+/**
+ * Retorna quadrados de movimento.
+ * 1 quadrado = 1,5 m  ou  5 ft
+ */
 export function getMovementSquares(value: number, unit: 'meters' | 'feet'): number {
-  const squareSize = unit === 'meters' ? 1.5 : 5
-  return Math.floor(value / squareSize)
+  if (unit === 'meters') {
+    return Math.floor(value / 1.5)
+  }
+  return Math.floor(value / 5)
 }
 
 export function getEffectiveMovement(character: Character): number {
@@ -133,7 +138,6 @@ export function getEffectiveMovement(character: Character): number {
     if (!item.equipped || item.category !== 'armor-shield' || !item.armor?.hasMovementReduction) {
       return total
     }
-
     return total + Math.max(0, item.armor.movementReduction)
   }, 0)
 

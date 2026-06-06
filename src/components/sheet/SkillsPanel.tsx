@@ -12,32 +12,35 @@ type SkillsPanelProps = {
 export function SkillsPanel({ character, onUpdate, onUpdateSkill }: SkillsPanelProps) {
   return (
     <Panel title="Perícias">
+      {/* ── Cabeçalho com penalidade ── */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <p className="text-sm text-solariam-mist">
-          <span className="font-medium text-solariam-parchment">Total</span> = Atributo + Treino +
-          Outros
+          <span className="font-medium text-solariam-parchment">Total</span> = Atributo + Treino + Outros
           {character.armorPenalty > 0 && (
-            <span> − Penalidade de armadura (perícias com +)</span>
+            <span className="text-solariam-ember"> − Penalidade de armadura (perícias com <sup>+</sup>)</span>
           )}
         </p>
+
         <label className="flex items-center gap-2">
-          <span className="text-xs uppercase tracking-wider text-solariam-mist">
+          <span className="whitespace-nowrap text-xs uppercase tracking-wider text-solariam-mist">
             Penalidade de armadura
           </span>
           <input
             type="number"
             value={character.armorPenalty}
-            onChange={(e) =>
-              onUpdate({ armorPenalty: Math.max(0, Number(e.target.value)) })
-            }
-            className="w-14 rounded border border-solariam-border bg-solariam-night px-2 py-1 text-center text-sm text-solariam-parchment outline-none focus:border-solariam-gold"
             min={0}
-            placeholder="Ex: 2"
+            onChange={(e) => {
+              const raw = e.target.value
+              const parsed = parseInt(raw, 10)
+              const value = isNaN(parsed) ? 0 : Math.max(0, parsed)
+              onUpdate({ armorPenalty: value })
+            }}
+            className="w-16 rounded border border-solariam-border bg-solariam-night px-2 py-1 text-center text-sm text-solariam-parchment outline-none focus:border-solariam-gold focus:ring-1 focus:ring-solariam-gold/30"
           />
-          <span className="text-xs text-solariam-mist" title="Valor positivo que será subtraído das perícias com +">(subtrai)</span>
         </label>
       </div>
 
+      {/* ── Cabeçalho das colunas (desktop) ── */}
       <div className="mb-2 hidden gap-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-solariam-mist lg:grid lg:grid-cols-[28px_1fr_56px_20px_72px_20px_56px_20px_56px]">
         <span />
         <span>Perícia</span>
@@ -50,6 +53,7 @@ export function SkillsPanel({ character, onUpdate, onUpdateSkill }: SkillsPanelP
         <span className="text-center">Outros</span>
       </div>
 
+      {/* ── Lista de perícias ── */}
       <div className="space-y-1">
         {character.skills.map((skill) => {
           const attrValue = character.attributes[skill.attribute]
@@ -64,6 +68,7 @@ export function SkillsPanel({ character, onUpdate, onUpdateSkill }: SkillsPanelP
               key={skill.id}
               className="rounded-md border border-solariam-border/40 bg-solariam-night/30 px-2 py-2 lg:grid lg:grid-cols-[28px_1fr_56px_20px_72px_20px_56px_20px_56px] lg:items-center lg:gap-2 lg:py-1.5"
             >
+              {/* Treinada */}
               <input
                 type="checkbox"
                 checked={skill.trained}
@@ -72,18 +77,15 @@ export function SkillsPanel({ character, onUpdate, onUpdateSkill }: SkillsPanelP
                 title="Treinada"
               />
 
+              {/* Nome */}
               <div className="min-w-0 py-1 lg:py-0">
                 <span className="font-medium text-solariam-parchment">
                   {displayName}
                   {skill.armorPenaltyApplies && (
-                    <sup className="ml-0.5 text-solariam-ember" title="Penalidade de armadura">
-                      +
-                    </sup>
+                    <sup className="ml-0.5 text-solariam-ember" title="Penalidade de armadura">+</sup>
                   )}
                   {skill.trainedOnly && (
-                    <sup className="ml-0.5 text-solariam-frost" title="Somente treinada">
-                      *
-                    </sup>
+                    <sup className="ml-0.5 text-solariam-frost" title="Somente treinada">*</sup>
                   )}
                 </span>
                 {skill.id.startsWith('oficio') && (
@@ -97,10 +99,12 @@ export function SkillsPanel({ character, onUpdate, onUpdateSkill }: SkillsPanelP
                 )}
               </div>
 
+              {/* Total + inputs */}
               <div className="mt-2 flex items-center gap-2 lg:mt-0 lg:contents">
                 <span className="text-[10px] uppercase text-solariam-mist lg:hidden">Total</span>
+
                 <span
-                  className={`flex h-9 w-14 items-center justify-center rounded border font-display text-lg font-bold lg:h-9 ${
+                  className={`flex h-9 w-14 items-center justify-center rounded border font-display text-lg font-bold ${
                     total === null
                       ? 'border-solariam-border/40 text-solariam-mist'
                       : 'border-solariam-gold/40 bg-solariam-gold/10 text-solariam-gold-light'
@@ -132,7 +136,7 @@ export function SkillsPanel({ character, onUpdate, onUpdateSkill }: SkillsPanelP
                   type="number"
                   value={skill.training}
                   onChange={(e) =>
-                    onUpdateSkill(skill.id, { training: Number(e.target.value) })
+                    onUpdateSkill(skill.id, { training: parseInt(e.target.value, 10) || 0 })
                   }
                   className="w-14 rounded border border-solariam-border bg-solariam-night px-2 py-1.5 text-center text-sm text-solariam-parchment outline-none focus:border-solariam-gold"
                   title="Treino"
@@ -143,7 +147,9 @@ export function SkillsPanel({ character, onUpdate, onUpdateSkill }: SkillsPanelP
                 <input
                   type="number"
                   value={skill.others}
-                  onChange={(e) => onUpdateSkill(skill.id, { others: Number(e.target.value) })}
+                  onChange={(e) =>
+                    onUpdateSkill(skill.id, { others: parseInt(e.target.value, 10) || 0 })
+                  }
                   className="w-14 rounded border border-solariam-border bg-solariam-night px-2 py-1.5 text-center text-sm text-solariam-parchment outline-none focus:border-solariam-gold"
                   title="Outros"
                 />

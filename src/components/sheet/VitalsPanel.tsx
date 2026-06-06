@@ -1,13 +1,11 @@
 import { useSettings } from '../../hooks/useSettings.tsx'
-import type { Character, DamageReduction, MovementUnit, Resistance } from '../../types/character'
+import type { Character, DamageReduction, Resistance } from '../../types/character'
 import {
   ATMA_BASE_PER_LEVEL,
   HP_BASE_PER_LEVEL,
   formatSigned,
-  getAtmaPerLevel,
   getDefenseBreakdown,
   getEffectiveMovement,
-  getHpPerLevel,
   getMovementSquares,
 } from '../../lib/calculations'
 import { ComboInput } from '../ui/ComboInput'
@@ -23,136 +21,113 @@ type VitalsPanelProps = {
 }
 
 function createDamageReduction(): DamageReduction {
-  return {
-    id: crypto.randomUUID(),
-    type: 'geral',
-    value: 0,
-  }
+  return { id: crypto.randomUUID(), type: 'geral', value: 0 }
 }
 
 function createResistance(): Resistance {
-  return {
-    id: crypto.randomUUID(),
-    type: 'geral',
-  }
+  return { id: crypto.randomUUID(), type: 'geral' }
 }
 
 export function VitalsPanel({ character, onUpdate }: VitalsPanelProps) {
   const { settings } = useSettings()
   const defense = getDefenseBreakdown(character)
-  const hpPerLevel = getHpPerLevel(character.attributes.resistencia)
-  const atmaPerLevel = getAtmaPerLevel(character.attributes.instinto)
   const effectiveMovement = getEffectiveMovement(character)
   const movementSquares = getMovementSquares(effectiveMovement, character.movementUnit)
-  const damageTypeOptions = ['geral', 'template']
+  const damageTypeOptions = ['geral', 'cortante', 'perfurante', 'contundente', 'fogo', 'frio', 'elétrico', 'ácido', 'veneno', 'necrótico', 'radiante', 'psíquico', 'trovão', 'força']
 
   const updateReduction = (id: string, patch: Partial<DamageReduction>) => {
     onUpdate({
-      damageReductions: character.damageReductions.map((reduction) =>
-        reduction.id === id ? { ...reduction, ...patch } : reduction,
+      damageReductions: character.damageReductions.map((r) =>
+        r.id === id ? { ...r, ...patch } : r,
       ),
     })
   }
 
   const removeReduction = (id: string) => {
-    onUpdate({
-      damageReductions: character.damageReductions.filter((reduction) => reduction.id !== id),
-    })
+    onUpdate({ damageReductions: character.damageReductions.filter((r) => r.id !== id) })
   }
 
   const updateResistance = (id: string, patch: Partial<Resistance>) => {
     onUpdate({
-      resistances: character.resistances.map((resistance) =>
-        resistance.id === id ? { ...resistance, ...patch } : resistance,
-      ),
+      resistances: character.resistances.map((r) => (r.id === id ? { ...r, ...patch } : r)),
     })
   }
 
   const removeResistance = (id: string) => {
-    onUpdate({
-      resistances: character.resistances.filter((resistance) => resistance.id !== id),
-    })
+    onUpdate({ resistances: character.resistances.filter((r) => r.id !== id) })
   }
 
   return (
-    <Panel title="Pontos de Vida, Atma e Defesa">
+    <Panel title="Vida, Atma e Defesa">
       <div className="space-y-6">
+
+        {/* ── Pontos de Vida ── */}
         <section>
           <div className="mb-3 flex items-center gap-2">
             <h3 className="font-display text-xs font-semibold uppercase tracking-widest text-solariam-gold">
               Pontos de Vida
             </h3>
             <HelpTip
-              text={`${HP_BASE_PER_LEVEL} + RES (${formatSigned(
-                character.attributes.resistencia,
-              )}) por nível, multiplicado pelo nível, somando outros bônus.`}
+              text={`${HP_BASE_PER_LEVEL} + RES (${formatSigned(character.attributes.resistencia)}) × nível + outros bônus.`}
             />
           </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <StatBox label="PV / Nível" value={hpPerLevel} />
-            <StatBox label="PV Máximos" value={character.hp.max} highlight />
+
+          <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+            {/* Barra interativa ocupa a maior parte */}
             <VitalDisplay
-              label="PV Atuais"
+              label="Pontos de Vida"
               current={character.hp.current}
               max={character.hp.max}
+              temporary={character.hp.others}
               icon="♥"
               color="gold"
               displayMode={settings.displayMode}
-              editable
               onChangeCurrent={(current) =>
                 onUpdate({ hp: { ...character.hp, current: Math.max(0, current) } })
               }
+              onChangeTemporary={(others) =>
+                onUpdate({ hp: { ...character.hp, others } })
+              }
             />
-            <div className="flex flex-col gap-1">
-              <span className="text-center text-[10px] font-semibold uppercase tracking-wider text-solariam-mist">
-                Outros
-              </span>
-              <NumberInput
-                value={character.hp.others}
-                onChange={(others) => onUpdate({ hp: { ...character.hp, others } })}
-              />
-            </div>
+
+            {/* PV Máximo destacado */}
+            <StatBox label="PV Máx." value={character.hp.max} highlight />
           </div>
         </section>
 
+        {/* ── Pontos de Atma ── */}
         <section className="border-t border-solariam-border/40 pt-4">
           <div className="mb-3 flex items-center gap-2">
             <h3 className="font-display text-xs font-semibold uppercase tracking-widest text-solariam-frost">
               Pontos de Atma
             </h3>
             <HelpTip
-              text={`${ATMA_BASE_PER_LEVEL} + INS (${formatSigned(
-                character.attributes.instinto,
-              )}) por nível, multiplicado pelo nível, somando outros bônus.`}
+              text={`${ATMA_BASE_PER_LEVEL} + INS (${formatSigned(character.attributes.instinto)}) × nível + outros bônus.`}
             />
           </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <StatBox label="PA / Nível" value={atmaPerLevel} />
-            <StatBox label="PA Máximos" value={character.atma.max} highlight />
+
+          <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
             <VitalDisplay
-              label="PA Atuais"
+              label="Pontos de Atma"
               current={character.atma.current}
               max={character.atma.max}
+              temporary={character.atma.others}
               icon="🔥"
               color="ember"
               displayMode={settings.displayMode}
-              editable
               onChangeCurrent={(current) =>
                 onUpdate({ atma: { ...character.atma, current: Math.max(0, current) } })
               }
+              onChangeTemporary={(others) =>
+                onUpdate({ atma: { ...character.atma, others } })
+              }
             />
-            <div className="flex flex-col gap-1">
-              <span className="text-center text-[10px] font-semibold uppercase tracking-wider text-solariam-mist">
-                Outros
-              </span>
-              <NumberInput
-                value={character.atma.others}
-                onChange={(others) => onUpdate({ atma: { ...character.atma, others } })}
-              />
-            </div>
+
+            <StatBox label="PA Máx." value={character.atma.max} highlight />
           </div>
         </section>
 
+        {/* ── Defesa ── */}
         <section className="border-t border-solariam-border/40 pt-4">
           <div className="mb-3 flex items-center gap-2">
             <h3 className="font-display text-xs font-semibold uppercase tracking-widest text-solariam-gold">
@@ -162,6 +137,7 @@ export function VitalsPanel({ character, onUpdate }: VitalsPanelProps) {
               text={`10 + AGI (${formatSigned(defense.agilidade)}) + armadura + escudo.`}
             />
           </div>
+
           <DefenseDisplay
             value={defense.total}
             breakdown={{
@@ -172,6 +148,7 @@ export function VitalsPanel({ character, onUpdate }: VitalsPanelProps) {
             }}
             displayMode={settings.displayMode}
           />
+
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="flex flex-col gap-1">
               <span className="text-xs uppercase tracking-wider text-solariam-mist">Armadura</span>
@@ -196,14 +173,16 @@ export function VitalsPanel({ character, onUpdate }: VitalsPanelProps) {
           </div>
         </section>
 
+        {/* ── Movimento ── */}
         <section className="border-t border-solariam-border/40 pt-4">
           <div className="mb-3 flex items-center gap-2">
             <h3 className="font-display text-xs font-semibold uppercase tracking-widest text-solariam-frost">
               Movimento
             </h3>
-            <HelpTip text="Cada 1,5 metros ou 5 feet representa 1 quadrado. Reduções de movimento de armaduras equipadas entram no movimento efetivo." />
+            <HelpTip text="1 quadrado = 1,5 m ou 5 ft. Ao trocar a unidade o valor é convertido automaticamente." />
           </div>
-          <div className="grid gap-3 sm:grid-cols-[1fr_1fr]">
+
+          <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
             <label className="flex flex-col gap-1">
               <span className="text-xs uppercase tracking-wider text-solariam-mist">Base</span>
               <NumberInput
@@ -212,15 +191,38 @@ export function VitalsPanel({ character, onUpdate }: VitalsPanelProps) {
                 min={0}
               />
             </label>
+
+            {/* Toggle metros / pés */}
+            <label className="flex flex-col gap-1">
+              <span className="text-xs uppercase tracking-wider text-solariam-mist">Unidade</span>
+              <div className="flex overflow-hidden rounded border border-solariam-border">
+                {(['meters', 'feet'] as const).map((unit) => (
+                  <button
+                    key={unit}
+                    type="button"
+                    onClick={() => onUpdate({ movementUnit: unit })}
+                    className={`flex-1 py-1.5 text-sm font-medium transition ${
+                      character.movementUnit === unit
+                        ? 'bg-solariam-frost/20 text-solariam-frost'
+                        : 'bg-solariam-night text-solariam-mist hover:bg-solariam-panel'
+                    }`}
+                  >
+                    {unit === 'meters' ? 'm' : 'ft'}
+                  </button>
+                ))}
+              </div>
+            </label>
+
             <StatBox
-              label="Movimento efetivo"
-              value={`${effectiveMovement} ${settings.movementUnit === 'meters' ? 'm' : 'ft'}`}
-              sublabel={`${movementSquares} quadrados`}
+              label="Quadrados"
+              value={`${movementSquares} sq`}
+              sublabel={`${effectiveMovement} ${character.movementUnit === 'meters' ? 'm' : 'ft'}`}
               highlight
             />
           </div>
         </section>
 
+        {/* ── Redução de Dano ── */}
         <section className="border-t border-solariam-border/40 pt-4">
           <div className="mb-3 flex items-center justify-between gap-3">
             <h3 className="font-display text-xs font-semibold uppercase tracking-widest text-solariam-gold">
@@ -229,9 +231,7 @@ export function VitalsPanel({ character, onUpdate }: VitalsPanelProps) {
             <button
               type="button"
               onClick={() =>
-                onUpdate({
-                  damageReductions: [...character.damageReductions, createDamageReduction()],
-                })
+                onUpdate({ damageReductions: [...character.damageReductions, createDamageReduction()] })
               }
               className="rounded bg-solariam-gold/20 px-2 py-1 text-xs font-semibold text-solariam-gold hover:bg-solariam-gold/30"
             >
@@ -256,9 +256,7 @@ export function VitalsPanel({ character, onUpdate }: VitalsPanelProps) {
                   />
                   <NumberInput
                     value={reduction.value}
-                    onChange={(value) =>
-                      updateReduction(reduction.id, { value: Math.max(0, value) })
-                    }
+                    onChange={(value) => updateReduction(reduction.id, { value: Math.max(0, value) })}
                     min={0}
                   />
                   <button
@@ -266,7 +264,7 @@ export function VitalsPanel({ character, onUpdate }: VitalsPanelProps) {
                     onClick={() => removeReduction(reduction.id)}
                     className="rounded border border-solariam-border px-3 py-2 text-sm text-solariam-ember hover:border-solariam-ember"
                   >
-                    Remover
+                    ✕
                   </button>
                 </div>
               ))}
@@ -274,6 +272,7 @@ export function VitalsPanel({ character, onUpdate }: VitalsPanelProps) {
           )}
         </section>
 
+        {/* ── Resistências ── */}
         <section className="border-t border-solariam-border/40 pt-4">
           <div className="mb-3 flex items-center justify-between gap-3">
             <h3 className="font-display text-xs font-semibold uppercase tracking-widest text-solariam-frost">
@@ -282,9 +281,7 @@ export function VitalsPanel({ character, onUpdate }: VitalsPanelProps) {
             <button
               type="button"
               onClick={() =>
-                onUpdate({
-                  resistances: [...character.resistances, createResistance()],
-                })
+                onUpdate({ resistances: [...character.resistances, createResistance()] })
               }
               className="rounded bg-solariam-frost/20 px-2 py-1 text-xs font-semibold text-solariam-frost hover:bg-solariam-frost/30"
             >
@@ -312,7 +309,7 @@ export function VitalsPanel({ character, onUpdate }: VitalsPanelProps) {
                     onClick={() => removeResistance(resistance.id)}
                     className="rounded border border-solariam-border px-3 py-2 text-sm text-solariam-ember hover:border-solariam-ember"
                   >
-                    Remover
+                    ✕
                   </button>
                 </div>
               ))}

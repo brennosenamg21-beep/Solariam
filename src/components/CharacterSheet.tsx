@@ -12,10 +12,20 @@ import { TabNav, type TabId } from './ui/TabNav'
 
 export function CharacterSheet() {
   const [activeTab, setActiveTab] = useState<TabId>('ficha')
-  const { character, updateCharacter, updateAttribute, updateSkill } = useCharacter()
+  const {
+    character,
+    updateCharacter,
+    updateAttribute,
+    updateSkill,
+    resetCharacter,
+    exportCharacter,
+    importCharacter,
+  } = useCharacter()
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
+
+      {/* ── Cabeçalho ── */}
       <header className="border-b border-solariam-border/60 pb-6 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-solariam-mist">
           Lendas de
@@ -24,10 +34,42 @@ export function CharacterSheet() {
           Solariam
         </h1>
         <p className="mt-1 text-sm text-solariam-mist">Ficha de Personagem</p>
+
+        {/* Botões de gerenciamento */}
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+          <button
+            type="button"
+            onClick={exportCharacter}
+            title="Exportar ficha como JSON"
+            className="flex items-center gap-1.5 rounded border border-solariam-border bg-solariam-night px-3 py-1.5 text-xs font-medium text-solariam-mist transition hover:border-solariam-gold/50 hover:text-solariam-gold"
+          >
+            <span>⬇</span> Exportar
+          </button>
+          <button
+            type="button"
+            onClick={importCharacter}
+            title="Importar ficha de um arquivo JSON"
+            className="flex items-center gap-1.5 rounded border border-solariam-border bg-solariam-night px-3 py-1.5 text-xs font-medium text-solariam-mist transition hover:border-solariam-frost/50 hover:text-solariam-frost"
+          >
+            <span>⬆</span> Importar
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (confirm('Limpar ficha e começar do zero?')) resetCharacter()
+            }}
+            title="Resetar ficha"
+            className="flex items-center gap-1.5 rounded border border-solariam-border bg-solariam-night px-3 py-1.5 text-xs font-medium text-solariam-mist transition hover:border-solariam-ember/50 hover:text-solariam-ember"
+          >
+            <span>↺</span> Nova ficha
+          </button>
+        </div>
       </header>
 
+      {/* ── Navegação ── */}
       <TabNav active={activeTab} onChange={setActiveTab} />
 
+      {/* ── Abas ── */}
       {activeTab === 'ficha' && (
         <div className="space-y-4">
           <Panel>
@@ -56,7 +98,9 @@ export function CharacterSheet() {
         <GrimoirePanel character={character} onUpdate={updateCharacter} />
       )}
 
-      {activeTab === 'notas' && <NotesPanel character={character} onUpdate={updateCharacter} />}
+      {activeTab === 'notas' && (
+        <NotesPanel character={character} onUpdate={updateCharacter} />
+      )}
     </div>
   )
 }
